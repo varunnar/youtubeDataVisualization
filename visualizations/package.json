@@ -1,0 +1,14 @@
+{
+  "name": "0c68fa0ca8d0ba94",
+  "main": "0c68fa0ca8d0ba94@817.js",
+  "version": "817.0.0",
+  "homepage": "https://observablehq.com/d/0c68fa0ca8d0ba94",
+  "author": {
+    "name": "Varun Narayanswamy",
+    "url": "https://observablehq.com/@varunk-narayanswamy"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}

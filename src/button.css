@@ -1,0 +1,10 @@
+.youtubeButton {
+    background-color: rgb(184, 0, 0);
+    color: white;
+    font-weight: bold;
+    width: 100px;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 20px;
+    text-align: center;
+  }
