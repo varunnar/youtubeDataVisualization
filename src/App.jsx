@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './button.css'; // Importing the CSS file
+import BubbleChart from './component/visualization.jsx';
+import ChordGraph from './component/chordGraph.jsx';
 // import * as d3 from d3;
 
 function App() {
   const [user, setUser] = useState(null);
+  const [subData, setSubData] = useState(null);
 
   useEffect(() => {
     // Dynamically load the GIS library
@@ -40,7 +43,6 @@ function App() {
   const handleCredentialResponse = (response) => {
     // Decode the JWT credential (optional, using a JWT library)
     const userObject = parseJwt(response.credential);
-    console.log('User:', userObject);
     setUser(userObject);
   };
 
@@ -52,7 +54,7 @@ function App() {
         if (response && response.access_token) {
           console.log("access token found", response.access_token);
           fetchSubs(response.access_token);
-          fetchLikedVideos(response.access_token);
+          //fetchLikedVideos(response.access_token);
         } else {
           console.log('Failed to obtain access token.');
         }
@@ -109,12 +111,12 @@ function App() {
       if (data.items) {
         for (const video of data.items) {
           const video_info = await fetchVideoInfo(accessToken, video.contentDetails.videoId);
-          // console.log("video id: ", video_info);
           if (video_info && video_info.categoryId) {
             let category = await getCategory(accessToken, video_info.categoryId);
 
             let liked_video_obj = {
               "title": video_info.title,
+              "channel": video_info.channelTitle,
               "tags": video_info.tags,
               "category": category,
               "icon": video_info.thumbnails,
@@ -123,7 +125,6 @@ function App() {
             liked_videos.push(liked_video_obj);
           }
         }
-        console.log("liked videos obj - ", liked_videos);
         console.log("liked videos obj JSON - ", JSON.stringify(liked_videos));
       } else {
         console.log("ERROR - liked video playlist item data missing values");
@@ -236,7 +237,7 @@ function App() {
         let playlist_tags = [];
         if (json_version && json_version.items && json_version.items.length > 0) {
           for (const video of json_version.items) {
-            let snippet = await fetchVideoInfo(accessToken, video.contentDetails.videoId).tags;
+            let snippet = await fetchVideoInfo(accessToken, video.contentDetails.videoId);
             if (snippet && snippet.tags) {
               let video_tags = snippet.tags;
               playlist_tags = playlist_tags.concat(video_tags);
@@ -299,6 +300,7 @@ function App() {
       }
     }
     console.log("Total Sub Info JSON", JSON.stringify(youtube_info));
+    setSubData(youtube_info);
   };
 
   // const fetchChannelObj = async(accessToken, channelId) => {
@@ -376,6 +378,8 @@ function App() {
   return (
     <div>
       <h1>Google Identity Services Example</h1>
+      <BubbleChart baseData={subData}/>
+      <ChordGraph baseData={subData}/>
       <div id="signInDiv"></div>
       <div className='youtubeButton' id="requestAccess" onClick={requestAccessToken}>Collect Your Youtube Data</div>
       {user && (
