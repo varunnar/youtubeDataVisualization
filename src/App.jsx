@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import './button.css'; // Importing the CSS file
-import BubbleChart from './component/visualization.jsx';
+import './styles/button.css'; // Importing the CSS file
+import './styles/layout.css'; // Importing the CSS file
+import BubbleChart from './component/bubbleGraph.jsx';
 import ChordGraph from './component/chordGraph.jsx';
+import MapVisualization from './component/mapVisualization.jsx';
+import GraphContainer from './component/graphContainer.jsx';
 // import * as d3 from d3;
 
 function App() {
@@ -52,7 +55,7 @@ function App() {
       scope:'https://www.googleapis.com/auth/youtube.readonly', // Scopes
       callback: (response) => {
         if (response && response.access_token) {
-          console.log("access token found", response.access_token);
+          //console.log("access token found", response.access_token);
           fetchSubs(response.access_token);
           //fetchLikedVideos(response.access_token);
         } else {
@@ -378,8 +381,6 @@ function App() {
   return (
     <div>
       <h1>Google Identity Services Example</h1>
-      <BubbleChart baseData={subData}/>
-      <ChordGraph baseData={subData}/>
       <div id="signInDiv"></div>
       <div className='youtubeButton' id="requestAccess" onClick={requestAccessToken}>Collect Your Youtube Data</div>
       {user && (
@@ -388,6 +389,17 @@ function App() {
           <img src={user.picture} alt="User Profile" />
         </div>
       )}
+      <div className='grid_3fr'>
+        <GraphContainer title="Bubble Chart" subtitle="Top 5 Tags" isloading={!subData}>
+          <BubbleChart baseData={subData}/>
+        </GraphContainer>
+        <GraphContainer title="Chord Graph" subtitle="Top 5 Tags" isloading={!subData}>
+          <ChordGraph baseData={subData}/>
+        </GraphContainer>
+        <GraphContainer title="Map Visualization" subtitle="Top 5 Tags" isloading={!subData}>
+          <MapVisualization baseData={subData}/>
+        </GraphContainer>
+      </div>
     </div>
   );
 }
@@ -428,61 +440,3 @@ export default App;
   //     )
   //}
 //}
-
-//THIS IS TEST CODE
-// function App() { // Capital letter indicates component
-//   const [todos, setTodos] = useState(() => {
-//     const localValue = localStorage.getItem("ITEMS")
-//     if (localValue == null) {
-//       return [];
-//     } else {
-//       return JSON.parse(localValue);
-//     }
-//   });
-//   //setNewItem("ssss") Can't do this because it causes an infinite loop cause it loops
-//   //classname is for class
-
-
-//   //CANNOT PUT HOOKS IN IF STATEMENTS
-//   useEffect(() => {
-//     localStorage.setItem("ITEMS", JSON.stringify(todos)) //saving to cache
-//   }, [todos]) //array at the end shows what makes it run - so whenever todos array runs the localstorage adds
-  
-//   function addTodo(title) {
-//     setTodos((currentTodos) => { //You need to make this function due to how state works in react.
-//       // If you just use todos in setTodos without a function the state doesn't update if you use multiple operations
-//       // For this reason you need to turn it into a custom function and then the return goes into the next thin
-//       return [...currentTodos, 
-//         {id: crypto.randomUUID(), title: title, completed: false}
-//       ]
-//   })
-//   }
-
-//   function toggleTodo(id, completed) {
-//     setTodos(currentTodos => {
-//       return currentTodos.map(todo => {
-//         if (todo.id === id) {
-//           return {...todo, completed}
-//           // todo.completed = completed - Can't do because you are mutating the variable
-//         }
-//         return todo
-//       })
-//     })
-//   }
-
-//   function deleteTodo(id) {
-//     setTodos(currentTodos => {
-//       return currentTodos.filter(todo => todo.id != id);
-//     })
-//   }
-
-//   return (
-//   <>
-//   <NewTodoForm onSubmit={addTodo}/>
-//   <h1 className='header'>Todo List</h1>
-//   <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo}/> 
-//   </>
-//   )
-// }
-
-// export default App
