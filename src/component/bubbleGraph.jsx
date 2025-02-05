@@ -76,7 +76,7 @@ function BubbleChart({ baseData }) {
       .attr("width", width)
       .attr("height", height)
       .attr("viewBox", [-margin, -margin, width, height])
-      .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;")
+      .attr("style", "max-width: 100%; height: auto; font: 20px sans-serif; color: white;")
       .attr("text-anchor", "middle")
 
 
@@ -141,14 +141,16 @@ function BubbleChart({ baseData }) {
       text.append("tspan")
         .attr("x", 0)
         .attr("y", -fontSize / 3) // Center vertically
-        .text(tag(d.data)); // Tag text
+        .text(tag(d.data)) // Tag text
+        .attr("fill", d => color_val(d.data).text);
 
       // Add the value as a second line
       text.append("tspan")
         .attr("x", 0)
         .attr("y", fontSize) // Slightly below the first line
         .attr("fill-opacity", 0.7)
-        .text(format(d.data[1])); // Value text
+        .text(format(d.data[1])) // Value text
+        .attr("fill", d => color_val(d.data).text);
     });
 };
 

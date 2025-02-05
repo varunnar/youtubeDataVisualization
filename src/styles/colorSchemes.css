@@ -1,0 +1,12 @@
+/* .app {
+    background-color: #000011;
+} */
+
+body {
+    background-color: #000011; /* Dark blue */
+    /* background: linear-gradient(to bottom, rgba(94, 0, 0, 1), rgba(0, 0, 0, 0.9)); */
+    color: white; /* Optional: Set text color to white for better contrast */
+    min-height: 100vh;
+    height: 105%;
+    padding: 50px;
+}

@@ -26,7 +26,18 @@ function ChordGraph( {baseData} ) {
 
         const root = tree(bilink(d3.hierarchy(data).sort((a,b) => d3.ascending(a.height, b.height) || d3.ascending(a.data.name, b.data.name)))); 
 
-        const colors = d3.quantize(d3.interpolateRainbow, root.children.length);
+        // const color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, 50));
+
+        const accessibleColors = [
+          "#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d", "#666666",
+          "#8dd3c7", "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69", "#fccde5",
+          "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f", "#ff7f00", "#6a3d9a", "#b15928", "#1f78b4",
+          "#33a02c", "#a6cee3", "#b2df8a", "#fb9a99", "#fdbf6f", "#cab2d6", "#ffff99", "#b3b3b3",
+          "#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#ffff33", "#a65628", "#f781bf",
+          "#999999", "#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494",
+          "#b3b3b3", "#abdda4"
+        ];
+        const color = d3.scaleOrdinal(accessibleColors);
 
         d3.select(svgRef.current).selectAll("*").remove();
 
@@ -41,13 +52,63 @@ function ChordGraph( {baseData} ) {
             .attr("viewBox", [-width / 2 - 150, -width / 2 - 150, width + 300, width + 300])
             .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;");
 
+        const defs = svg.append("defs");
+
         const zoomGroup = svg.append("g")
+
+        // Create gradients for each link
+        root.leaves().forEach((leaf, i) => {
+          //console.log("leaf", leaf);
+          leaf.outgoing.forEach(([source, target]) => {
+            const gradientId = `gradient-${i}-${source.parent.data.name}-${target.parent.data.name}`;
+            const gradient = defs.append("linearGradient")
+              .attr("id", gradientId)
+              .attr("gradientUnits", "userSpaceOnUse")
+              .attr("x1", source.x)
+              .attr("y1", source.y)
+              .attr("x2", target.x)
+              .attr("y2", target.y);
+
+            
+            console.log("gradient setup ", gradientId);
+
+            gradient.append("stop")
+              .attr("offset", "0%")
+              .attr("stop-color", color(source.parent.data.name));
+
+            gradient.append("stop")
+              .attr("offset", "25%")
+              .attr("stop-color", d3.interpolateRgb(color(source.parent.data.name), color(target.parent.data.name))(0.25));
+
+            gradient.append("stop")
+              .attr("offset", "75%")
+              .attr("stop-color", d3.interpolateRgb(color(source.parent.data.name), color(target.parent.data.name))(0.75));
+
+            gradient.append("stop")
+              .attr("offset", "100%")
+              .attr("stop-color", color(target.parent.data.name));
+          });
+        });
 
         zoomGroup.append("circle")
             .attr("r", radius - 100) // Adjust to match the size of your nodes
             .attr("fill", "none") // Transparent fill
             .attr("stroke", "#FF0033") // Border color
             .attr("stroke-width", 5);
+        console.log("root,", root)
+
+        const arc = d3.arc()
+          .innerRadius(radius - 100)
+          .outerRadius(radius - 95)
+          .startAngle(d => d.x0)
+          .endAngle(d => d.x1);
+
+        zoomGroup.append("g")
+          .selectAll()
+          .data(root.children)
+          .join("path")
+          .attr("d", arc)
+          .attr("fill", d => color(d.data.name));
 
         const node = zoomGroup.append("g")
             .selectAll()
@@ -87,34 +148,39 @@ function ChordGraph( {baseData} ) {
 
 
         const link = zoomGroup.append("g")
-            .attr("stroke", "#000")
             .attr("fill", "none")
             .attr("stroke-width", "3")
             .selectAll()
             .data(root.leaves().flatMap(leaf => leaf.outgoing))
             // .data(root.descendants().filter(d => d.depth === 2).outgoing)
             .join("path")
-            .style("mix-blend-mode", "multiply")
+            .style("mix-blend-mode", null)
             .attr("d", ([i, o]) => line(i.path(o)))
+          //   .attr("stroke", ([source, target]) => {
+          //     const gradientId = `gradient-${root.leaves().indexOf(source)}-${source.parent.data.name}-${target.parent.data.name}`;
+          //     //${root.leaves().indexOf(source)}-
+          //     return `url(#${gradientId})`;
+          // })
+            .attr("stroke", "#fff")
             .each(function(d) { d.path = this; });
 
 
         function overed(event, d) {
             link.style("mix-blend-mode", null); //Set blend mode to null to not select too much
             d3.select(this).attr("font-weight", "bold"); //highlight on hover mode and make text bold
-            d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", "#f00").attr("stroke-width", "5").raise(); //high light links and bring them to the front
-            d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", "#f00").attr("font-weight", "bold"); //move text to the front and make them that color
-            d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", "#f00").attr("stroke-width", "5").raise(); //Do the same with outgoing nodes
-            d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", "#f00").attr("font-weight", "bold"); //do the same with outgoing nodes
+            d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", "#DD0000").attr("stroke-width", "10").raise(); //high light links and bring them to the front
+            d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", "red").attr("font-weight", "bold"); //move text to the front and make them that color
+            d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", "#DD0000").attr("stroke-width", "10").raise(); //Do the same with outgoing nodes
+            d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", "red").attr("font-weight", "bold"); //do the same with outgoing nodes
         }
 
         function outed(event, d) {
-            link.style("mix-blend-mode", "multiply"); //Set blend mode for links
+            link.style("mix-blend-mode", null); //Set blend mode for links
             d3.select(this).attr("font-weight", null); //remove any bolding style
-            d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", null).attr("stroke-width", "1"); //remove stroke colors on incoming
-            d3.selectAll(d.incoming.map(([d]) => d.text)).attr("fill", null).attr("font-weight", null); //remove text bold incoming
-            d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", null).attr("stroke-width", "1"); //remove stroke coloring for outgoing
-            d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("fill", null).attr("font-weight", null); //remove text bold outgoing
+            d3.selectAll(d.incoming.map(d => d.path)).attr("stroke", "#FFF").attr("stroke-width", "3"); //remove stroke colors on incoming
+            d3.selectAll(d.incoming.map(([d]) => d.text)).attr("font-weight", null).attr("fill", "white"); //remove text bold incoming
+            d3.selectAll(d.outgoing.map(d => d.path)).attr("stroke", "#FFF").attr("stroke-width", "3"); //remove stroke coloring for outgoing
+            d3.selectAll(d.outgoing.map(([, d]) => d.text)).attr("font-weight", null).attr("fill", "white"); //remove text bold outgoing
         }
 
         const zoom = d3.zoom()
@@ -193,6 +259,7 @@ function ChordGraph( {baseData} ) {
     function chord_data(youtube) {
         let return_obj = [];
         for (const youtuber of youtube) {
+            //const youtuber = youtube[i];
             let youtuber_updated = {}
             let new_tag_arr = [];
             if (youtuber.tags.length > 0) {
