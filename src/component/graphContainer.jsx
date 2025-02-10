@@ -3,6 +3,8 @@ import '../styles/layout.css'; // Importing the CSS file
 
 function GraphContainer({ title, subtitle,description, isloading, children }) {
 
+    console.log("children: ", children);
+
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleExpand = () => {
@@ -19,7 +21,11 @@ function GraphContainer({ title, subtitle,description, isloading, children }) {
             </>
         )}
             <div className={`centered_item ${!isloading ? "border_section" : ""}`}>
-                {children}
+                {children[0]}
+            </div>
+
+            <div className={`text-content`}>
+                {children[1]}
             </div>
         </div>    
     )
