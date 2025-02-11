@@ -58,3 +58,16 @@
     color: rgb(255, 255, 255);
     margin: 0px;
 }
+
+.hide_element {
+    display: none;
+}
+
+.button_centered {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import * as d3 from "d3";
 
-function AreaGraph({ baseData, allBodyColors }) {
+function AreaGraph({ baseData, allBodyColors, onRender }) {
     const width = 1154;
     const height = 1154;
 
@@ -81,6 +81,11 @@ function AreaGraph({ baseData, allBodyColors }) {
             .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.1 + i * 0.9}em`)
             .attr("fill-opacity", (d, i, nodes) => i === nodes.length - 1 ? 0.7 : null)
             .text(d => d);
+
+        if (onRender) {
+            onRender(2);
+        }
+  
         
         const zoom = d3.zoom()
             .scaleExtent([1, 8]) // Zoom levels from 1x to 8x
@@ -98,7 +103,7 @@ function AreaGraph({ baseData, allBodyColors }) {
         // Apply zoom to the SVG
         svg.call(zoom);
 
-    }, [baseData]);
+    }, [baseData, onRender]);
 
 
     function setData(liked_videos_with_channel) {

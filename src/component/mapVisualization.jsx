@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from "react";
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
 
-function MapVisualization({baseData}) {
+function MapVisualization({baseData, onRender}) {
 
     const width = 2000;
     const marginTop = 46;
@@ -128,6 +128,10 @@ function MapVisualization({baseData}) {
 
 
         textContent()
+
+        if (onRender) {
+            onRender(4);
+        }
         // Add zoom behavior
         const zoom = d3.zoom()
         .scaleExtent([1, 8]) // Zoom levels from 1x to 8x
@@ -248,7 +252,7 @@ function MapVisualization({baseData}) {
         
         svg.call(zoom);
 
-    }, [baseData]);
+    }, [baseData, onRender]);
 
     function brandData(youtube) {
         let new_obj = [];

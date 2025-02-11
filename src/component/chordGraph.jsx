@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import * as d3 from "d3";
 
-function ChordGraph( {baseData} ) {
+function ChordGraph( {baseData, onRender} ) {
     const width = 1000;
     const radius = width / 2;
     const inner_radius = width-50;
@@ -68,9 +68,6 @@ function ChordGraph( {baseData} ) {
               .attr("y1", source.y)
               .attr("x2", target.x)
               .attr("y2", target.y);
-
-            
-            console.log("gradient setup ", gradientId);
 
             gradient.append("stop")
               .attr("offset", "0%")
@@ -164,6 +161,10 @@ function ChordGraph( {baseData} ) {
             .attr("stroke", "#fff")
             .each(function(d) { d.path = this; });
 
+          if (onRender) {
+              onRender(1);
+          }
+
 
         function overed(event, d) {
             link.style("mix-blend-mode", null); //Set blend mode to null to not select too much
@@ -198,7 +199,7 @@ function ChordGraph( {baseData} ) {
 
         // Apply zoom to the SVG
         svg.call(zoom);
-    }, [baseData]);
+    }, [baseData, onRender]);
 
     function bilink(root) {
         // Replace spaces in names with underscores for consistent matching

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from "react";
 import * as d3 from "d3";
 
-function LineGraph({baseData, allBodyColors, darkerBodyColors}) {
+function LineGraph({baseData, allBodyColors, darkerBodyColors, onRender}) {
 
 
     const svgRef = useRef();
@@ -166,6 +166,10 @@ function LineGraph({baseData, allBodyColors, darkerBodyColors}) {
             .attr("alignment-baseline", "middle");
         });
 
+        if (onRender) {
+            onRender(3);
+        }
+
         const zoom = d3.zoom()
             .scaleExtent([1, 8]) // Zoom levels from 1x to 8x
             .translateExtent([[0, 0], [width, height]]) // Constrain panning
@@ -185,7 +189,7 @@ function LineGraph({baseData, allBodyColors, darkerBodyColors}) {
   // Add text value at the end of each l
 
 
-    }, [baseData])
+    }, [baseData, onRender])
 
 
 

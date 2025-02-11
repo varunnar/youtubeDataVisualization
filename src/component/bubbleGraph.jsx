@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-function BubbleChart({ baseData }) {
+function BubbleChart({ baseData, onRender}) {
   const svgRef = useRef();
   const width = 1500;
   const height = width;
@@ -161,6 +161,11 @@ text.each(function (d) {
   fitTextToCircle(d3.select(this), circleDiameter);
 });
 
+if (onRender) {
+  onRender(0);
+}
+
+
 const zoom = d3.zoom()
   .scaleExtent([1, 8]) // Zoom levels from 1x to 8x
   .translateExtent([[0, 0], [width, height]]) // Constrain panning
@@ -176,7 +181,7 @@ const zoom = d3.zoom()
 
 // Apply zoom to the SVG
 svg.call(zoom);
-  }, [baseData]);
+  }, [baseData, onRender]);
 
 function buildTagData(youtube){
   let tag_output = {};

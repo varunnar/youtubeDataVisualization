@@ -12,7 +12,7 @@ function GraphContainer({ title, subtitle,description, isloading, children }) {
     };
 
     return (
-        <div className={`graph-container ${isExpanded ? 'expanded' : ''}`} onClick={handleExpand}>
+        <div className={`graph-container ${isExpanded ? 'expanded' : ''}`}>
             {!isloading && (
             <>
             <h3>{title}</h3>
