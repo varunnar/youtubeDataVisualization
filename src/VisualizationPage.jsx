@@ -60,7 +60,7 @@ function VisualizationPage({ likedData, subData, allBodyColors, darkerBodyColors
         <AreaGraph baseData={likedData} allBodyColors={allBodyColors} onRender={handleGraphRender}/>
         <Gemini messaging="Explain how my top liked videos are split by channel and recommend channels the relate to the top ones" data={JSON.stringify(likedData)}/>
       </GraphContainer>
-      <GraphContainer title="Breakdown of last 50 videos liked by category" subtitle="Top 5 Tags" description="This visualization shows the different video categories you've liked over the last 50 videos you liked." isloading={!likedData || !subData}>
+      <GraphContainer title="Breakdown of last 50 videos liked by category" subtitle="Top 5 Tags" description="This visualization shows the different video categories you've liked over the last 50 videos you liked." isloading={!likedData || !subData} fullWidth={true}>
         <LineGraph baseData={likedData} darkerBodyColors={darkerBodyColors} allBodyColors={allBodyColors} onRender={handleGraphRender}/>
         <Gemini messaging="Can you analyze how my liked videos have changed over time in different categories and recommend some cateogries" data={JSON.stringify(likedData)}/>
       </GraphContainer>

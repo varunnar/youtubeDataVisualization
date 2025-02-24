@@ -59,7 +59,7 @@ function LoginPage({ setUser, fetchSubs, fetchLikedVideos }) {
                 navigate('/visualization');
             } else {
                 console.log('Failed to obtain access token.');
-            }å
+            }
             },
         });
 

@@ -49,6 +49,10 @@
     overflow: auto;
 }
 
+.graph-container.full {
+    width: 90%;
+}
+
 .login-page {
     display: flex;
     flex-direction: column;

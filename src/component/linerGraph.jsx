@@ -14,8 +14,6 @@ function LineGraph({baseData, allBodyColors, darkerBodyColors, onRender}) {
 
         const catogory_data = lineGraphData(baseData);
 
-
-        let reversed_cat = catogory_data
         let final_version = catogory_data[0];
         let categories = Object.keys(final_version).filter((key) => key !== "index");
         let maxValue = Math.max(...categories.map((key) => final_version[key]));
@@ -44,7 +42,7 @@ function LineGraph({baseData, allBodyColors, darkerBodyColors, onRender}) {
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove();
         svg
-            .attr("viewBox", [-20, 0, width+150, height*1.1])
+            .attr("viewBox", [-20, -20, width+300, height*1.1])
             .attr("style", "width: 100%; height: auto; font: 10px; sans-serif;");
 
         const svgGroup = svg.append("g");

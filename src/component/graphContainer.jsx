@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import '../styles/layout.css'; // Importing the CSS file
 
-function GraphContainer({ title, subtitle,description, isloading, children }) {
+function GraphContainer({ title, subtitle,description, isloading, children, fullWidth=false}) {
 
     console.log("children: ", children);
 
@@ -12,7 +12,7 @@ function GraphContainer({ title, subtitle,description, isloading, children }) {
     };
 
     return (
-        <div className={`graph-container ${isExpanded ? 'expanded' : ''}`}>
+        <div className={`graph-container ${isExpanded ? 'expanded' : ''} ${fullWidth ? 'full' : ''}`}>
             {!isloading && (
             <>
             <h3>{title}</h3>
